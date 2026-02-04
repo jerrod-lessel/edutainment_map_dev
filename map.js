@@ -15,3 +15,14 @@ L.tileLayer(
   }
 ).addTo(map);
 
+// Guadalupe boundary (approximate box for now)
+const guadalupeBounds = L.latLngBounds(
+  [34.920, -120.640], // southwest (ocean)
+  [35.010, -120.500]  // northeast (river/county line)
+);
+
+// Constrain map movement
+map.setMaxBounds(guadalupeBounds);
+map.on('drag', () => {
+  map.panInsideBounds(guadalupeBounds, { animate: false });
+});
