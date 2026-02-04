@@ -193,6 +193,8 @@ fetch(`data/knowledge_nodes.geojson?v=${Date.now()}`)
       pointToLayer: (feature, latlng) =>
         L.circleMarker(latlng, {
           radius: 8,
+          color: "#2c7be5",      // blue outline
+          fillColor: "#2c7be5",  // blue fill
           weight: 2,
           fillOpacity: 0.9
         }),
@@ -233,6 +235,8 @@ fetch(`data/positive_news.geojson?v=${Date.now()}`)
         // A simple “news pin” marker style
         return L.circleMarker(latlng, {
           radius: 9,
+          color: "#f0b429",      // golden outline
+          fillColor: "#f0b429",  // golden fill
           weight: 2,
           fillOpacity: 0.95
         });
