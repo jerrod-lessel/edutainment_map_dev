@@ -19,6 +19,30 @@
             ],
             "correct": 1,
             "explain": "Even when it looks dry, the river corridor shapes flooding, recharges groundwater, supports habitats, and influences where roads and cities can safely exist."
+          },
+          {
+            "level": 2,
+            "question": "Why is the Santa Maria River often dry on the surface for much of the year?",
+            "choices": [
+              "Because California doesn’t get any rain.",
+              "Because the channel sediments can soak up water, and most rainfall is seasonal.",
+              "Because the river is artificially turned off each summer.",
+              "Because rivers only flow during leap years."
+            ],
+            "correct": 1,
+            "explain": "In a Mediterranean climate, rain is concentrated in winter. Much of the flow can also infiltrate into sandy/gravelly river sediments, so surface water disappears while subsurface flow and groundwater remain important."
+          },
+          {
+            "level": 3,
+            "question": "What’s the biggest infrastructure risk rivers create for towns like Guadalupe?",
+            "choices": [
+              "Flooding that can overwhelm channels, bridges, and roads during big storms.",
+              "Spontaneous geysers appearing under the downtown streets.",
+              "The river slowly turning into lava (rare, but dramatic).",
+              "The water becoming too polite to cross a bridge."
+            ],
+            "correct": 0,
+            "explain": "Flooding is the major risk: intense storms can rapidly increase discharge, forcing engineers to design bridges/culverts and plan development around floodplains and extreme events."
           }
         ]
       },
