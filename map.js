@@ -221,3 +221,50 @@ fetch(`data/knowledge_nodes.geojson?v=${Date.now()}`)
     console.error(err);
     alert("Failed to load knowledge nodes.");
   });
+
+// ===============================
+// Positive News Pins
+// ===============================
+fetch(`data/positive_news.geojson?v=${Date.now()}`)
+  .then(r => r.json())
+  .then(geojson => {
+    L.geoJSON(geojson, {
+      pointToLayer: (feature, latlng) => {
+        // A simple “news pin” marker style
+        return L.circleMarker(latlng, {
+          radius: 9,
+          weight: 2,
+          fillOpacity: 0.95
+        });
+      },
+      onEachFeature: (feature, layer) => {
+        const p = feature.properties;
+
+        const html = `
+          <div class="pc-card">
+            <div class="pc-title">🟡 ${escapeHtml(p.title || "Positive news")}</div>
+            ${p.date ? `<div class="pc-qmeta">${escapeHtml(p.date)}</div>` : ""}
+            <div class="pc-question">${escapeHtml(p.summary || "")}</div>
+            <div class="pc-actions" style="flex-wrap:wrap;">
+              <a class="pc-btn pc-primary" href="${p.article_url}" target="_blank" rel="noopener">Read article</a>
+              <a class="pc-btn" href="${p.wiki_url}" target="_blank" rel="noopener">Wikipedia</a>
+              <a class="pc-btn" href="${p.charity_url}" target="_blank" rel="noopener">How to help</a>
+            </div>
+          </div>
+        `;
+
+        layer.bindPopup(html, {
+          maxWidth: 360,
+          autoPan: true,
+          keepInView: true,
+          autoPanPaddingTopLeft: [20, 80],
+          autoPanPaddingBottomRight: [20, 20],
+          offset: L.point(0, 12)
+        });
+      }
+    }).addTo(map);
+  })
+  .catch(err => {
+    console.error(err);
+  });
+
