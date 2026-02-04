@@ -1,30 +1,30 @@
+// ===============================
 // Initialize the map
+// ===============================
 const map = L.map('map', {
   zoomControl: true,
   attributionControl: false
 });
 
-// Guadalupe-focused view (rough center)
+// Guadalupe-focused view
 map.setView([34.9715, -120.5713], 13);
 
-// Clean basemap (calm, modern)
+// Basemap
 L.tileLayer(
   'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-  {
-    maxZoom: 18
-  }
+  { maxZoom: 18 }
 ).addTo(map);
 
-// Guadalupe world bounds (approximate, we refine later)
+// ===============================
+// Guadalupe bounds
+// ===============================
 const guadalupeBounds = L.latLngBounds(
-  [34.920, -120.640], // Southwest (ocean)
-  [35.010, -120.500]  // Northeast (river / county line)
+  [34.920, -120.640], // SW
+  [35.010, -120.500]  // NE
 );
 
-// Keep map inside Guadalupe
 map.setMaxBounds(guadalupeBounds);
-
-map.on('drag', function () {
+map.on('drag', () => {
   map.panInsideBounds(guadalupeBounds, { animate: false });
 });
 
@@ -35,8 +35,9 @@ L.rectangle(guadalupeBounds, {
   fillOpacity: 0
 }).addTo(map);
 
-// --- Knowledge Nodes (GeoJSON) ---
-
+// ===============================
+// Utilities
+// ===============================
 function escapeHtml(str) {
   return String(str)
     .replaceAll("&", "&amp;")
@@ -46,42 +47,59 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
-function storageKey(nodeId) {
+function progressKey(nodeId) {
   return `pc_progress_${nodeId}`;
 }
 
+function answeredKey(nodeId, idx) {
+  return `pc_answered_${nodeId}_${idx}`;
+}
+
 function getProgress(nodeId) {
-  const raw = localStorage.getItem(storageKey(nodeId));
+  const raw = localStorage.getItem(progressKey(nodeId));
   const n = raw ? parseInt(raw, 10) : 0;
   return Number.isFinite(n) ? n : 0;
 }
 
 function setProgress(nodeId, idx) {
-  localStorage.setItem(storageKey(nodeId), String(idx));
+  localStorage.setItem(progressKey(nodeId), String(idx));
 }
 
+// ===============================
+// Render knowledge node panel
+// ===============================
 function renderNodeCard(feature) {
   const p = feature.properties;
   const nodeId = p.id;
   const questions = p.questions || [];
-  const idx = Math.min(getProgress(nodeId), Math.max(questions.length - 1, 0));
+  const idx = Math.min(getProgress(nodeId), questions.length - 1);
   const q = questions[idx] || {};
 
-  const answered = localStorage.getItem(`pc_answered_${nodeId}_${idx}`) === "1";
+  const answered = localStorage.getItem(answeredKey(nodeId, idx)) === "1";
+  const message = feature._pcMessage || "";
 
   const choices = Array.isArray(q.choices) ? q.choices : [];
   const choicesHtml = choices.length
     ? `<div class="pc-choices">
         ${choices.map((c, i) => `
-          <button class="pc-choice" data-action="choose" data-choice="${i}" ${answered ? "disabled" : ""}>
+          <button
+            class="pc-choice"
+            data-action="choose"
+            data-choice="${i}"
+            ${answered ? "disabled" : ""}
+          >
             ${escapeHtml(c)}
           </button>
         `).join("")}
       </div>`
-    : `<div class="pc-hint"><b>Hint:</b> ${escapeHtml(q.hint || "No choices yet for this question.")}</div>`;
+    : "";
 
   const explainHtml = answered && q.explain
     ? `<div class="pc-explain"><b>Explanation:</b> ${escapeHtml(q.explain)}</div>`
+    : "";
+
+  const msgHtml = message
+    ? `<div class="pc-msg">${escapeHtml(message)}</div>`
     : "";
 
   const done = idx >= questions.length - 1;
@@ -93,8 +111,9 @@ function renderNodeCard(feature) {
       ${p.subtitle ? `<div class="pc-subtitle">${escapeHtml(p.subtitle)}</div>` : ""}
 
       <div class="pc-qmeta">Question ${idx + 1} of ${questions.length}</div>
-      <div class="pc-question">${escapeHtml(q.question || "No question yet.")}</div>
+      <div class="pc-question">${escapeHtml(q.question || "")}</div>
 
+      ${msgHtml}
       ${choicesHtml}
       ${explainHtml}
 
@@ -108,11 +127,13 @@ function renderNodeCard(feature) {
   `;
 }
 
+// ===============================
+// Popup interaction logic
+// ===============================
 function wirePopupBehavior(popup) {
   const el = popup.getElement();
   if (!el) return;
 
-  // HARD stop: prevent map clicks from closing the popup
   el.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -128,73 +149,68 @@ function wirePopupBehavior(popup) {
     const action = btn.getAttribute("data-action");
 
     const feature = popup._pcFeature;
-    const questions = (feature?.properties?.questions) || [];
+    const questions = feature.properties.questions || [];
     const q = questions[idx];
 
     if (action === "reset") {
       setProgress(nodeId, 0);
-      // clear answered flags for this node
       for (let i = 0; i < questions.length; i++) {
-        localStorage.removeItem(`pc_answered_${nodeId}_${i}`);
+        localStorage.removeItem(answeredKey(nodeId, i));
       }
+      feature._pcMessage = "";
     }
 
     if (action === "choose") {
       const choice = parseInt(btn.getAttribute("data-choice"), 10);
       if (q && Number.isInteger(q.correct)) {
         if (choice === q.correct) {
-          localStorage.setItem(`pc_answered_${nodeId}_${idx}`, "1");
+          localStorage.setItem(answeredKey(nodeId, idx), "1");
+          feature._pcMessage = "";
         } else {
-          // gentle feedback
-          alert("Not quite — try again 🙂");
+          feature._pcMessage = "Not quite — try again 🙂";
         }
       }
     }
 
     if (action === "next") {
-      const answered = localStorage.getItem(`pc_answered_${nodeId}_${idx}`) === "1";
-      if (answered) setProgress(nodeId, idx + 1);
+      if (localStorage.getItem(answeredKey(nodeId, idx)) === "1") {
+        setProgress(nodeId, idx + 1);
+      }
     }
 
-    // Re-render without closing the popup
     popup.setContent(renderNodeCard(feature));
     setTimeout(() => wirePopupBehavior(popup), 0);
   }, { passive: false });
 }
 
-// Load and add nodes
-fetch("data/knowledge_nodes.geojson")
-  .then((r) => {
-    if (!r.ok) throw new Error(`Failed to load GeoJSON: ${r.status}`);
-    return r.json();
-  })
-  .then((geojson) => {
+// ===============================
+// Load knowledge nodes
+// ===============================
+fetch(`data/knowledge_nodes.geojson?v=${Date.now()}`)
+  .then(r => r.json())
+  .then(geojson => {
     L.geoJSON(geojson, {
-      pointToLayer: (feature, latlng) => {
-        // Simple “knowledge node” marker
-        return L.circleMarker(latlng, {
+      pointToLayer: (feature, latlng) =>
+        L.circleMarker(latlng, {
           radius: 8,
           weight: 2,
           fillOpacity: 0.9
-        });
-      },
+        }),
       onEachFeature: (feature, layer) => {
-        layer.bindPopup(() => renderNodeCard(feature), { maxWidth: 320 });
-      
+        layer.bindPopup(() => renderNodeCard(feature), { maxWidth: 340 });
+
         layer.on("popupopen", (e) => {
           const popup = e.popup;
-          popup._pcFeature = feature; // stash for refresh
+          popup._pcFeature = feature;
 
           map.panInside(e.popup.getLatLng(), { padding: [20, 20] });
 
-          // defer one tick so the DOM exists
           setTimeout(() => wirePopupBehavior(popup), 0);
         });
       }
-
     }).addTo(map);
   })
-  .catch((err) => {
+  .catch(err => {
     console.error(err);
-    alert("Could not load knowledge nodes. Check the console for details.");
+    alert("Failed to load knowledge nodes.");
   });
