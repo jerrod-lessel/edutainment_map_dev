@@ -9,3 +9,71 @@ html, body {
   width: 100%;
 }
 
+/* --- Knowledge nodes panel styling --- */
+.pc-card {
+  line-height: 1.25;
+}
+
+.pc-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 2px;
+}
+
+.pc-subtitle {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+.pc-qmeta {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  margin: 6px 0;
+}
+
+.pc-question {
+  font-size: 0.95rem;
+  margin: 8px 0;
+}
+
+.pc-hint {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin: 8px 0;
+}
+
+.pc-answer summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-top: 6px;
+}
+
+.pc-answer-body {
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+.pc-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.pc-btn {
+  border: 1px solid rgba(0,0,0,0.2);
+  background: white;
+  padding: 6px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.pc-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.pc-primary {
+  font-weight: 700;
+}
