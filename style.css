@@ -89,3 +89,16 @@ html, body {
   font-size: 0.9rem;
 }
 .pc-explain { font-size: 0.9rem; margin-top: 8px; }
+
+/* Make Leaflet popup behave more like a panel */
+.leaflet-popup-content {
+  margin: 12px 14px;        /* a bit more breathing room */
+  width: 340px !important;  /* wider panel */
+  max-height: 55vh;         /* cap height relative to screen */
+  overflow-y: auto;         /* scroll if too tall */
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 16px;
+}
+
