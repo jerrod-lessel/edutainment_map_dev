@@ -9,24 +9,17 @@
         "subtitle": "Why a “dry” river still matters",
         "questions": [
           {
-            "level": 1,
-            "question": "This river is often dry. So… why does it still matter?",
-            "hint": "Think: groundwater, floods, habitats, and where towns like to build things.",
-            "answer": "Even when it looks dry, the river corridor shapes flooding, recharges groundwater, supports habitats, and influences where roads and cities can safely exist."
-          },
-          {
-            "level": 2,
-            "question": "Why is it dry so much of the year?",
-            "hint": "Seasonal rain + sandy/gravelly channels are a big clue.",
-            "answer": "In Mediterranean climates, most rain falls in winter, and the riverbed can be highly permeable—water often soaks into sediments or flows underground outside of storm periods."
-          },
-          {
-            "level": 3,
-            "question": "What’s the big engineering problem rivers create for cities?",
-            "hint": "It starts with “F” and ends with “looding.”",
-            "answer": "Flooding risk—rivers can go from calm to dangerous quickly, so bridges, levees, culverts, and setbacks are designed around rare-but-big storm events."
-          }
-        ]
+        "level": 1,
+          "question": "This river is often dry. So… why does it still matter?",
+          "choices": [
+            "It doesn’t — dry rivers are basically decorative trenches.",
+            "It shapes flooding, groundwater recharge, habitats, and where people build infrastructure.",
+            "It only matters for fishing year-round.",
+            "It exists mainly to confuse map readers."
+          ],
+          "correct": 1,
+          "explain": "Even when it looks dry, the river corridor shapes flooding, recharges groundwater, supports habitats, and influences where roads and cities can safely exist."
+        }
       },
       "geometry": {
         "type": "Point",
