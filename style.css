@@ -110,3 +110,119 @@ html, body {
   background: rgba(0,0,0,0.03);
   font-size: 0.9rem;
 }
+
+:root{
+  --hud-bg: #d7d3c8;
+  --hud-bg-2: #c9c4b7;
+  --hud-border-dark: #3b3a35;
+  --hud-border-mid: #7a776e;
+  --hud-highlight: #ffffff;
+  --hud-shadow: rgba(0,0,0,0.25);
+
+  --ink: #1f1f1c;
+
+  --blue: #2c7be5;   /* knowledge */
+  --gold: #f0b429;   /* news */
+}
+
+/* Overall vibe */
+body {
+  color: var(--ink);
+  font-family: "VT323", system-ui, sans-serif;
+  letter-spacing: 0.2px;
+}
+
+/* Leaflet controls (zoom buttons) */
+.leaflet-control-zoom a {
+  background: var(--hud-bg) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--hud-border-mid) !important;
+  box-shadow: 2px 2px 0 var(--hud-border-dark) !important;
+  border-radius: 6px !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--hud-bg-2) !important;
+}
+
+/* Popup wrapper = “SimCity-ish panel” */
+.leaflet-popup-content-wrapper {
+  background: var(--hud-bg) !important;
+  border-radius: 14px !important;
+  border: 2px solid var(--hud-border-dark) !important;
+  box-shadow: 4px 4px 0 var(--hud-border-dark), 0 10px 30px var(--hud-shadow) !important;
+  position: relative;
+}
+
+/* Fake beveled edge */
+.leaflet-popup-content-wrapper:before{
+  content:"";
+  position:absolute;
+  inset: 3px;
+  border-radius: 10px;
+  border-top: 2px solid var(--hud-highlight);
+  border-left: 2px solid var(--hud-highlight);
+  border-right: 2px solid var(--hud-border-mid);
+  border-bottom: 2px solid var(--hud-border-mid);
+  pointer-events:none;
+}
+
+/* Popup “tail” */
+.leaflet-popup-tip {
+  background: var(--hud-bg) !important;
+  border: 2px solid var(--hud-border-dark) !important;
+}
+
+/* Panel text styling */
+.pc-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+
+.pc-subtitle {
+  font-family: "VT323", monospace;
+  font-size: 1.15rem;
+  opacity: 0.85;
+}
+
+/* Buttons: chunky retro */
+.pc-btn, .pc-choice {
+  font-family: "VT323", monospace;
+  font-size: 1.05rem;
+  border: 2px solid var(--hud-border-dark) !important;
+  background: var(--hud-bg-2) !important;
+  box-shadow: 2px 2px 0 var(--hud-border-dark) !important;
+  border-radius: 10px !important;
+}
+
+.pc-btn:hover, .pc-choice:hover {
+  filter: brightness(0.98);
+}
+
+.pc-btn:active, .pc-choice:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--hud-border-dark) !important;
+}
+
+.pc-primary {
+  background: #b9d8ff !important;
+}
+
+/* Inline message style: “HUD notification” */
+.pc-msg {
+  background: #fff5c7;
+  border: 2px solid var(--hud-border-dark);
+  box-shadow: 2px 2px 0 var(--hud-border-dark);
+}
+
+/* Optional: a very subtle CRT-ish scanline feel on panels */
+.leaflet-popup-content-wrapper {
+  background-image: linear-gradient(
+    rgba(255,255,255,0.06) 1px,
+    rgba(0,0,0,0.00) 1px
+  );
+  background-size: 100% 6px;
+}
+
