@@ -190,14 +190,31 @@ fetch(`data/knowledge_nodes.geojson?v=${Date.now()}`)
   .then(r => r.json())
   .then(geojson => {
     L.geoJSON(geojson, {
-      pointToLayer: (feature, latlng) =>
-        L.circleMarker(latlng, {
+      pointToLayer: (feature, latlng) => {
+        const kind = feature?.properties?.kind || "default";
+      
+        // Base style for all knowledge nodes
+        const base = {
           radius: 8,
-          color: "#2c7be5",      // blue outline
-          fillColor: "#2c7be5",  // blue fill
           weight: 2,
-          fillOpacity: 0.9
-        }),
+          fillOpacity: 0.95
+        };
+      
+        // Per-kind styling (easy to tweak later)
+        const stylesByKind = {
+          hydrology:      { color: "#2c7be5", fillColor: "#2c7be5" }, // blue
+          geomorphology:  { color: "#b7791f", fillColor: "#b7791f" }, // dune-ish brown
+          infrastructure: { color: "#6b7280", fillColor: "#6b7280" }, // steel gray
+          ecology:        { color: "#2f855a", fillColor: "#2f855a" }, // green
+          urban:          { color: "#7c3aed", fillColor: "#7c3aed" }, // purple
+          default:        { color: "#2c7be5", fillColor: "#2c7be5" }
+        };
+      
+        const style = stylesByKind[kind] || stylesByKind.default;
+      
+        return L.circleMarker(latlng, { ...base, ...style });
+      },
+
       onEachFeature: (feature, layer) => {
         layer.bindPopup(() => renderNodeCard(feature), {
           maxWidth: 340,
